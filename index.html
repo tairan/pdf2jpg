@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Google Tag Manager -->
+    <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+    new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+    j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+    'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+    })(window,document,'script','dataLayer','GTM-MZW7CH5F');</script>
+    <!-- End Google Tag Manager -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PDF → JPG</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne+Mono&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/src/style.css" />
+  </head>
+  <body>
+    <!-- Google Tag Manager (noscript) -->
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZW7CH5F"
+    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <!-- ═══════════════ HEADER ═══════════════ -->
+    <header class="site-header">
+      <div class="header-inner">
+        <div class="logo">
+          <span class="logo-icon">
+            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <rect x="3" y="1" width="17" height="22" rx="1" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M20 1l5 5v17a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M20 1v5h5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M7 10h10M7 14h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+          </span>
+          <span class="logo-name">PDF<span class="accent">→</span>JPG</span>
+        </div>
+        <div class="header-meta">Browser-only · No upload · No server</div>
+      </div>
+    </header>
+
+    <!-- ═══════════════ MAIN ═══════════════ -->
+    <main class="main">
+
+      <!-- ── STEP 1: DROP ZONE ── -->
+      <section id="section-upload" class="section active">
+        <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Upload PDF file">
+          <div class="drop-zone__inner">
+            <div class="drop-zone__icon">
+              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M24 32V16M24 16L17 23M24 16L31 23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M8 36a6 6 0 01-2-4.5C6 27 9.5 24 14 24c.5 0 1 .05 1.5.12A10 10 0 0134 22c4 0 7.5 3 7.9 7A5 5 0 0140 39H8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <p class="drop-zone__label">Drop PDF here</p>
+            <p class="drop-zone__sub">or <button class="link-btn" id="btn-browse">browse file</button></p>
+          </div>
+          <input type="file" id="file-input" accept="application/pdf" hidden />
+        </div>
+      </section>
+
+      <!-- ── STEP 2: OPTIONS ── -->
+      <section id="section-options" class="section">
+        <div class="file-info-bar">
+          <span class="file-info__name" id="info-name">document.pdf</span>
+          <span class="file-info__size" id="info-size">0 KB</span>
+          <button class="link-btn small" id="btn-reset-file">change file</button>
+        </div>
+
+        <div class="options-grid">
+          <div class="option-block">
+            <label class="option-label" for="opt-scale">
+              Resolution
+              <span class="option-value" id="scale-value-display">2×</span>
+            </label>
+            <input type="range" id="opt-scale" class="range-input"
+              min="1" max="3" step="0.5" value="2" />
+            <div class="range-ticks">
+              <span>72 dpi</span>
+              <span>144 dpi</span>
+              <span>216 dpi</span>
+            </div>
+          </div>
+
+          <div class="option-block">
+            <label class="option-label" for="opt-quality">
+              JPEG Quality
+              <span class="option-value" id="quality-value-display">92%</span>
+            </label>
+            <input type="range" id="opt-quality" class="range-input"
+              min="60" max="100" step="1" value="92" />
+            <div class="range-ticks">
+              <span>60%</span>
+              <span>80%</span>
+              <span>100%</span>
+            </div>
+          </div>
+        </div>
+
+        <label class="toggle-row" for="opt-stitch">
+          <span class="toggle-row__label">
+            <span class="toggle-row__title">拼接为单张图片</span>
+            <span class="toggle-row__sub">将所有页面垂直拼接输出为一个 JPG 文件</span>
+          </span>
+          <span class="toggle-wrap">
+            <input type="checkbox" id="opt-stitch" checked />
+            <span class="toggle-track"><span class="toggle-thumb"></span></span>
+          </span>
+        </label>
+
+        <div class="gap-row" id="gap-row">
+          <label class="option-label" for="opt-gap">
+            页间距
+            <span class="option-value" id="gap-value-display">40 px</span>
+          </label>
+          <input type="range" id="opt-gap" class="range-input"
+            min="0" max="200" step="10" value="40" />
+          <div class="range-ticks">
+            <span>0</span>
+            <span>100 px</span>
+            <span>200 px</span>
+          </div>
+        </div>
+
+        <button class="btn-convert" id="btn-convert">
+          <span class="btn-convert__text">Convert to JPG</span>
+          <span class="btn-convert__arrow">→</span>
+        </button>
+      </section>
+
+      <!-- ── STEP 3: PROGRESS ── -->
+      <section id="section-progress" class="section">
+        <div class="progress-block">
+          <div class="progress-header">
+            <span class="progress-label">PROCESSING</span>
+            <span class="progress-counter" id="progress-counter">0 / 0</span>
+          </div>
+          <div class="progress-track">
+            <div class="progress-fill" id="progress-fill"></div>
+          </div>
+          <p class="progress-page-info" id="progress-page-info">Rendering page 1…</p>
+        </div>
+      </section>
+
+      <!-- ── STEP 4: RESULTS ── -->
+      <section id="section-results" class="section">
+        <div class="results-header">
+          <div class="results-summary">
+            <span class="results-count" id="results-count">0</span>
+            <span class="results-unit" id="results-unit">pages converted</span>
+          </div>
+          <div class="results-actions">
+            <button class="btn-download" id="btn-download">
+              <span id="btn-download-text">Download ZIP</span>
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </button>
+            <button class="btn-secondary" id="btn-reset">
+              Convert another
+            </button>
+          </div>
+        </div>
+
+        <!-- stitch preview (shown in stitch mode) -->
+        <div class="stitch-preview" id="stitch-preview" hidden>
+          <img id="stitch-img" src="" alt="Stitched output" />
+        </div>
+
+        <!-- per-page thumbnail grid (shown in multi-page mode) -->
+        <div class="thumbnail-grid" id="thumbnail-grid"></div>
+      </section>
+
+    </main>
+
+    <!-- ═══════════════ FOOTER ═══════════════ -->
+    <footer class="site-footer">
+      <span>All processing happens locally in your browser. Files never leave your device.</span>
+    </footer>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
