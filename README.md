@@ -4,7 +4,7 @@
 
 于是用 Vibe Coding 写了这个工具：**全程在浏览器本地运行，零上传，零服务器。**
 
-🔗 **在线使用：[pdf2jpg.tairan.com](https://pdf2jpg.tairan.com)**
+🔗 **在线使用：[pdf2jpg.tairan.org](https://pdf2jpg.tairan.org)**
 
 ---
 
