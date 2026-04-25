@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="zh-CN">
   <head>
     <!-- Google Tag Manager -->
     <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
@@ -10,11 +10,42 @@
     <!-- End Google Tag Manager -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>PDF → JPG</title>
+    <title>PDF 转 JPG</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <script>
+      (() => {
+        const themeKey = 'pdf2img:theme-mode';
+        const localeKey = 'pdf2img:locale';
+        const localeToLang = {
+          zh: 'zh-CN',
+          en: 'en',
+          ja: 'ja-JP',
+          de: 'de',
+          fr: 'fr'
+        };
+
+        let themeMode = 'system';
+        let locale = 'zh';
+
+        try {
+          themeMode = localStorage.getItem(themeKey) || themeMode;
+          locale = localStorage.getItem(localeKey) || locale;
+        } catch {
+          // Ignore storage access failures and fall back to defaults.
+        }
+
+        const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const resolvedTheme = themeMode === 'system' ? (prefersDark ? 'dark' : 'light') : themeMode;
+
+        document.documentElement.dataset.theme = resolvedTheme;
+        document.documentElement.dataset.themeMode = themeMode;
+        document.documentElement.lang = localeToLang[locale] || 'zh-CN';
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Syne+Mono&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Sans+SC:wght@400;500;700&family=Poppins:wght@500;600;700&display=swap"
       rel="stylesheet"
     />
     <link rel="stylesheet" href="/src/style.css" />
@@ -24,161 +55,209 @@
     <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MZW7CH5F"
     height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
     <!-- End Google Tag Manager (noscript) -->
-    <!-- ═══════════════ HEADER ═══════════════ -->
+
+    <div class="app-backdrop" aria-hidden="true"></div>
+
     <header class="site-header">
       <div class="header-inner">
-        <div class="logo">
-          <span class="logo-icon">
-            <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <rect x="3" y="1" width="17" height="22" rx="1" stroke="currentColor" stroke-width="1.5"/>
-              <path d="M20 1l5 5v17a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-              <path d="M20 1v5h5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
-              <path d="M7 10h10M7 14h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
-            </svg>
-          </span>
-          <span class="logo-name">PDF<span class="accent">→</span>JPG</span>
+        <div class="logo-wrap">
+          <div class="logo">
+            <span class="logo-icon" aria-hidden="true">
+              <svg width="30" height="30" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="3" y="1" width="17" height="22" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                <path d="M20 1l5 5v17a1 1 0 01-1 1h-4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M20 1v5h5" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                <path d="M7 10h10M7 14h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </span>
+            <div class="logo-copy">
+              <span class="logo-name">PDF<span class="accent">→</span>JPG</span>
+              <p class="logo-tagline" data-i18n="header.meta">浏览器内处理 · 无需上传 · 结果留在本地</p>
+            </div>
+          </div>
         </div>
-        <div class="header-meta">Browser-only · No upload · No server</div>
+
+        <div class="header-controls" aria-label="Preferences">
+          <label class="toolbar-field" for="theme-mode-select">
+            <span class="toolbar-label" data-i18n="toolbar.theme">外观</span>
+            <select id="theme-mode-select" class="toolbar-select"></select>
+          </label>
+          <label class="toolbar-field" for="locale-select">
+            <span class="toolbar-label" data-i18n="toolbar.language">语言</span>
+            <select id="locale-select" class="toolbar-select"></select>
+          </label>
+        </div>
       </div>
     </header>
 
-    <!-- ═══════════════ MAIN ═══════════════ -->
     <main class="main">
+      <section class="hero-panel">
+        <div class="hero-copy">
+          <p class="hero-eyebrow" data-i18n="hero.eyebrow">本地 PDF 工具</p>
+          <h1 class="hero-title" data-i18n="hero.title">在浏览器里，把 PDF 变成清晰 JPG。</h1>
+          <p class="hero-subtitle" data-i18n="hero.subtitle">支持逐页导出 ZIP 或拼接长图，全程本地处理，不上传，不排队。</p>
+        </div>
 
-      <!-- ── STEP 1: DROP ZONE ── -->
-      <section id="section-upload" class="section active">
-        <div id="drop-zone" class="drop-zone" role="button" tabindex="0" aria-label="Upload PDF file">
-          <div class="drop-zone__inner">
-            <div class="drop-zone__icon">
-              <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M24 32V16M24 16L17 23M24 16L31 23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M8 36a6 6 0 01-2-4.5C6 27 9.5 24 14 24c.5 0 1 .05 1.5.12A10 10 0 0134 22c4 0 7.5 3 7.9 7A5 5 0 0140 39H8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <p class="drop-zone__label">Drop PDF here</p>
-            <p class="drop-zone__sub">or <button class="link-btn" id="btn-browse">browse file</button></p>
-          </div>
-          <input type="file" id="file-input" accept="application/pdf" hidden />
+        <div class="hero-points">
+          <article class="hero-point">
+            <span class="hero-point__label" data-i18n="hero.pointPrivacyLabel">隐私</span>
+            <strong class="hero-point__value" data-i18n="hero.pointPrivacyValue">文件不离开设备</strong>
+          </article>
+          <article class="hero-point">
+            <span class="hero-point__label" data-i18n="hero.pointModesLabel">输出</span>
+            <strong class="hero-point__value" data-i18n="hero.pointModesValue">支持 ZIP 与长图</strong>
+          </article>
+          <article class="hero-point">
+            <span class="hero-point__label" data-i18n="hero.pointSpeedLabel">流程</span>
+            <strong class="hero-point__value" data-i18n="hero.pointSpeedValue">拖放后立即转换</strong>
+          </article>
         </div>
       </section>
 
-      <!-- ── STEP 2: OPTIONS ── -->
-      <section id="section-options" class="section">
-        <div class="file-info-bar">
-          <span class="file-info__name" id="info-name">document.pdf</span>
-          <span class="file-info__size" id="info-size">0 KB</span>
-          <button class="link-btn small" id="btn-reset-file">change file</button>
-        </div>
+      <div class="workbench">
+        <section id="section-upload" class="section active">
+          <div class="drop-zone-shell">
+            <div class="drop-zone-copy">
+              <p class="section-kicker" data-i18n="upload.kicker">步骤 1</p>
+              <h2 class="section-title" data-i18n="upload.title">选择你的 PDF 文件</h2>
+              <p class="section-subtitle" data-i18n="upload.subtitle">把文件拖到下方区域，或直接从设备中选择。</p>
+            </div>
 
-        <div class="options-grid">
-          <div class="option-block">
-            <label class="option-label" for="opt-scale">
-              Resolution
-              <span class="option-value" id="scale-value-display">2×</span>
-            </label>
-            <input type="range" id="opt-scale" class="range-input"
-              min="1" max="3" step="0.5" value="2" />
-            <div class="range-ticks">
-              <span>72 dpi</span>
-              <span>144 dpi</span>
-              <span>216 dpi</span>
+            <div id="drop-zone" class="drop-zone" role="button" tabindex="0" data-i18n-aria-label="upload.ariaLabel">
+              <div class="drop-zone__inner">
+                <div class="drop-zone__icon" aria-hidden="true">
+                  <svg width="52" height="52" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M24 32V16M24 16L17 23M24 16L31 23" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M8 36a6 6 0 01-2-4.5C6 27 9.5 24 14 24c.5 0 1 .05 1.5.12A10 10 0 0134 22c4 0 7.5 3 7.9 7A5 5 0 0140 39H8z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <p class="drop-zone__label" id="drop-zone-label" data-i18n="upload.dropLabel">将 PDF 拖放到这里</p>
+                <p class="drop-zone__sub">
+                  <span data-i18n="upload.or">或</span>
+                  <button class="link-btn" id="btn-browse" data-i18n="upload.browse">选择文件</button>
+                </p>
+                <p class="drop-zone__hint" data-i18n="upload.supportHint">支持拖放，仅处理 PDF 文件。</p>
+              </div>
+              <input type="file" id="file-input" accept="application/pdf" hidden />
+            </div>
+          </div>
+        </section>
+
+        <section id="section-options" class="section">
+          <div class="file-info-bar">
+            <div class="file-info-copy">
+              <span class="file-info__name" id="info-name">document.pdf</span>
+              <span class="file-info__size" id="info-size">0 KB</span>
+            </div>
+            <button class="link-btn small" id="btn-reset-file" data-i18n="file.change">重新选择文件</button>
+          </div>
+
+          <div class="panel-head">
+            <p class="section-kicker" data-i18n="options.kicker">步骤 2</p>
+            <h2 class="section-title" data-i18n="options.title">选择导出方式与图像质量</h2>
+          </div>
+
+          <div class="options-grid">
+            <div class="option-block">
+              <label class="option-label" for="opt-scale">
+                <span data-i18n="options.resolution">清晰度</span>
+                <span class="option-value" id="scale-value-display">2×</span>
+              </label>
+              <input type="range" id="opt-scale" class="range-input" min="1" max="3" step="0.5" value="2" />
+              <div class="range-ticks">
+                <span data-i18n="options.ticks.dpi72">72 dpi</span>
+                <span data-i18n="options.ticks.dpi144">144 dpi</span>
+                <span data-i18n="options.ticks.dpi216">216 dpi</span>
+              </div>
+            </div>
+
+            <div class="option-block">
+              <label class="option-label" for="opt-quality">
+                <span data-i18n="options.quality">JPEG 质量</span>
+                <span class="option-value" id="quality-value-display">92%</span>
+              </label>
+              <input type="range" id="opt-quality" class="range-input" min="60" max="100" step="1" value="92" />
+              <div class="range-ticks">
+                <span>60%</span>
+                <span>80%</span>
+                <span>100%</span>
+              </div>
             </div>
           </div>
 
-          <div class="option-block">
-            <label class="option-label" for="opt-quality">
-              JPEG Quality
-              <span class="option-value" id="quality-value-display">92%</span>
-            </label>
-            <input type="range" id="opt-quality" class="range-input"
-              min="60" max="100" step="1" value="92" />
-            <div class="range-ticks">
-              <span>60%</span>
-              <span>80%</span>
-              <span>100%</span>
-            </div>
-          </div>
-        </div>
-
-        <label class="toggle-row" for="opt-stitch">
-          <span class="toggle-row__label">
-            <span class="toggle-row__title">拼接为单张图片</span>
-            <span class="toggle-row__sub">将所有页面垂直拼接输出为一个 JPG 文件</span>
-          </span>
-          <span class="toggle-wrap">
-            <input type="checkbox" id="opt-stitch" checked />
-            <span class="toggle-track"><span class="toggle-thumb"></span></span>
-          </span>
-        </label>
-
-        <div class="gap-row" id="gap-row">
-          <label class="option-label" for="opt-gap">
-            页间距
-            <span class="option-value" id="gap-value-display">40 px</span>
+          <label class="toggle-row" for="opt-stitch">
+            <span class="toggle-row__label">
+              <span class="toggle-row__title" data-i18n="options.stitchTitle">拼接为单张图片</span>
+              <span class="toggle-row__sub" data-i18n="options.stitchSubtitle">将所有页面垂直拼接输出为一个 JPG 文件</span>
+            </span>
+            <span class="toggle-wrap">
+              <input type="checkbox" id="opt-stitch" checked />
+              <span class="toggle-track"><span class="toggle-thumb"></span></span>
+            </span>
           </label>
-          <input type="range" id="opt-gap" class="range-input"
-            min="0" max="200" step="10" value="40" />
-          <div class="range-ticks">
-            <span>0</span>
-            <span>100 px</span>
-            <span>200 px</span>
+
+          <div class="gap-row" id="gap-row">
+            <label class="option-label" for="opt-gap">
+              <span data-i18n="options.gap">页间距</span>
+              <span class="option-value" id="gap-value-display">40 px</span>
+            </label>
+            <input type="range" id="opt-gap" class="range-input" min="0" max="200" step="10" value="40" />
+            <div class="range-ticks">
+              <span>0</span>
+              <span>100 px</span>
+              <span>200 px</span>
+            </div>
           </div>
-        </div>
 
-        <button class="btn-convert" id="btn-convert">
-          <span class="btn-convert__text">Convert to JPG</span>
-          <span class="btn-convert__arrow">→</span>
-        </button>
-      </section>
+          <button class="btn-convert" id="btn-convert">
+            <span class="btn-convert__text" data-i18n="actions.convert">转换为 JPG</span>
+            <span class="btn-convert__arrow" aria-hidden="true">→</span>
+          </button>
+        </section>
 
-      <!-- ── STEP 3: PROGRESS ── -->
-      <section id="section-progress" class="section">
-        <div class="progress-block">
-          <div class="progress-header">
-            <span class="progress-label">PROCESSING</span>
-            <span class="progress-counter" id="progress-counter">0 / 0</span>
+        <section id="section-progress" class="section">
+          <div class="progress-block">
+            <div class="progress-header">
+              <span class="progress-label" data-i18n="progress.processing">处理中</span>
+              <span class="progress-counter" id="progress-counter">0 / 0</span>
+            </div>
+            <div class="progress-track">
+              <div class="progress-fill" id="progress-fill"></div>
+            </div>
+            <p class="progress-page-info" id="progress-page-info">正在渲染第 1 页…</p>
           </div>
-          <div class="progress-track">
-            <div class="progress-fill" id="progress-fill"></div>
+        </section>
+
+        <section id="section-results" class="section">
+          <div class="results-header">
+            <div class="results-summary">
+              <span class="results-count" id="results-count">0</span>
+              <span class="results-unit" id="results-unit">已生成 JPG 文件</span>
+            </div>
+            <div class="results-actions">
+              <button class="btn-download" id="btn-download">
+                <span id="btn-download-text">下载 ZIP</span>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                  <path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+              <button class="btn-secondary" id="btn-reset" data-i18n="results.convertAnother">继续转换</button>
+            </div>
           </div>
-          <p class="progress-page-info" id="progress-page-info">Rendering page 1…</p>
-        </div>
-      </section>
 
-      <!-- ── STEP 4: RESULTS ── -->
-      <section id="section-results" class="section">
-        <div class="results-header">
-          <div class="results-summary">
-            <span class="results-count" id="results-count">0</span>
-            <span class="results-unit" id="results-unit">pages converted</span>
+          <div class="stitch-preview" id="stitch-preview" hidden>
+            <img id="stitch-img" src="" alt="拼接结果预览" data-i18n-alt="results.stitchAlt" />
           </div>
-          <div class="results-actions">
-            <button class="btn-download" id="btn-download">
-              <span id="btn-download-text">Download ZIP</span>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path d="M8 2v8M5 7l3 3 3-3M2 12h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </button>
-            <button class="btn-secondary" id="btn-reset">
-              Convert another
-            </button>
-          </div>
-        </div>
 
-        <!-- stitch preview (shown in stitch mode) -->
-        <div class="stitch-preview" id="stitch-preview" hidden>
-          <img id="stitch-img" src="" alt="Stitched output" />
-        </div>
+          <div class="thumbnail-grid" id="thumbnail-grid"></div>
+        </section>
+      </div>
 
-        <!-- per-page thumbnail grid (shown in multi-page mode) -->
-        <div class="thumbnail-grid" id="thumbnail-grid"></div>
-      </section>
-
+      <p id="status-live" class="sr-only" aria-live="polite"></p>
     </main>
 
-    <!-- ═══════════════ FOOTER ═══════════════ -->
     <footer class="site-footer">
-      <span>All processing happens locally in your browser. Files never leave your device.</span>
+      <span data-i18n="footer.note">所有处理均在你的浏览器中完成，文件不会离开当前设备。</span>
     </footer>
 
     <script type="module" src="/src/main.js"></script>
